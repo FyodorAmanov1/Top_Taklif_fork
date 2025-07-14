@@ -20,4 +20,11 @@ export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const facebookProvider = new FacebookAuthProvider();
 
+// Configure Google provider
+googleProvider.addScope('profile');
+googleProvider.addScope('email');
+
+// Configure Facebook provider  
+facebookProvider.addScope('email');
+facebookProvider.addScope('public_profile');
 export default app;

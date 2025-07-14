@@ -19,7 +19,7 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
     displayName: ''
   });
 
-  const { signInWithGoogle, signInWithFacebook, signInWithTelegram, signInWithEmail, signUpWithEmail } = useAuth();
+  const { signInWithGoogle, signInWithFacebook, signInWithTelegram, signInWithEmail, signUpWithEmail, authError } = useAuth();
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData(prev => ({
@@ -50,22 +50,20 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
 
   const handleSocialAuth = async (provider: 'google' | 'facebook') => {
     setError('');
+    setLoading(true);
 
     try {
-      setLoading(true);
       if (provider === 'google') {
         await signInWithGoogle();
       } else {
         await signInWithFacebook();
       }
-      setLoading(false);
       onClose();
     } catch (error: any) {
       console.error(`${provider} auth error:`, error);
-      setError(error.message || `${provider} authentication failed. Please try again.`);
-      setLoading(false);
+      // Don't set error here as it's handled by AuthContext
     } finally {
-      // Loading state is now handled in try/catch blocks
+      setLoading(false);
     }
   };
 
@@ -225,6 +223,11 @@ const AuthModal: React.FC<AuthModalProps> = ({ isOpen, onClose }) => {
               </div>
             )}
 
+            {authError && (
+              <div className="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg">
+                <p className="text-sm text-red-600 dark:text-red-400">{authError}</p>
+              </div>
+            )}
             <button
               type="submit"
               disabled={loading}
